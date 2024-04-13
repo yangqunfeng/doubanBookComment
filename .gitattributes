@@ -1,0 +1,2 @@
+newCommentdata filter=lfs diff=lfs merge=lfs -text
+newBookInformation filter=lfs diff=lfs merge=lfs -text
