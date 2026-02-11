@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translations.page_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-content">
+                <!-- 语言切换 -->
+                <div class="lang-switcher">
+                    <button class="lang-btn {% if lang == 'zh' %}active{% endif %}" onclick="switchLanguage('zh')">中文</button>
+                    <button class="lang-btn {% if lang == 'en' %}active{% endif %}" onclick="switchLanguage('en')">English</button>
+                </div>
+                
+                <h1 class="title">
+                    <span class="title-icon">📚</span>
+                    {{ translations.main_title }}
+                </h1>
+                <p class="subtitle">{{ translations.subtitle }}</p>
+            </div>
+            <div class="stats-bar" id="statsBar">
+                <div class="stat-item">
+                    <span class="stat-label">{{ translations.stat_books }}</span>
+                    <span class="stat-value" id="statBooks">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">{{ translations.stat_authors }}</span>
+                    <span class="stat-value" id="statAuthors">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">{{ translations.stat_publishers }}</span>
+                    <span class="stat-value" id="statPublishers">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">{{ translations.stat_relations }}</span>
+                    <span class="stat-value" id="statRelations">-</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 输入区域 -->
+            <section class="input-section">
+                <div class="section-header">
+                    <h2>{{ translations.input_title }}</h2>
+                    <p>{{ translations.input_subtitle }}</p>
+                </div>
+                
+                <div class="input-area">
+                    <div class="book-input-wrapper">
+                        <input type="text" 
+                               id="bookInput" 
+                               class="book-input" 
+                               placeholder="{{ translations.input_placeholder }}"
+                               autocomplete="off">
+                        <button class="add-btn" id="addBookBtn">
+                            <span>+</span> {{ translations.btn_add }}
+                        </button>
+                    </div>
+                    
+                    <!-- 搜索建议 -->
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                    
+                    <!-- 已添加的书籍 -->
+                    <div class="favorite-books" id="favoriteBooks">
+                        <div class="empty-state">
+                            <span class="empty-icon">📖</span>
+                            <p>{{ translations.empty_books }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 关键词选择区域 -->
+                    <div class="keywords-section" id="keywordsSection" style="display: none;">
+                        <h3 class="keywords-title">
+                            <span class="keywords-icon">🏷️</span>
+                            {{ translations.keywords_title }}
+                            <small>{{ translations.keywords_subtitle }}</small>
+                        </h3>
+                        <div class="keywords-container" id="keywordsContainer">
+                            <div class="loading-keywords">
+                                <div class="loading-spinner-small"></div>
+                                <p>{{ translations.loading_keywords }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 推荐策略选择 -->
+                    <div class="strategy-section">
+                        <h3 class="strategy-title">
+                            <span class="strategy-icon">🎯</span>
+                            {{ translations.strategy_title }}
+                        </h3>
+                        
+                        <div class="strategy-options">
+                            <label class="strategy-option">
+                                <input type="radio" name="strategy" value="mixed" checked>
+                                <div class="option-content">
+                                    <span class="option-icon">🔀</span>
+                                    <div class="option-text">
+                                        <strong>{{ translations.strategy_mixed }}</strong>
+                                        <small>{{ translations.strategy_mixed_desc }}</small>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="strategy-option">
+                                <input type="radio" name="strategy" value="kg_only">
+                                <div class="option-content">
+                                    <span class="option-icon">🕸️</span>
+                                    <div class="option-text">
+                                        <strong>{{ translations.strategy_kg }}</strong>
+                                        <small>{{ translations.strategy_kg_desc }}</small>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="strategy-option">
+                                <input type="radio" name="strategy" value="keyword_only">
+                                <div class="option-content">
+                                    <span class="option-icon">🔑</span>
+                                    <div class="option-text">
+                                        <strong>{{ translations.strategy_keyword }}</strong>
+                                        <small>{{ translations.strategy_keyword_desc }}</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <!-- 知识图谱关系选择 -->
+                        <div class="relations-section" id="relationsSection">
+                            <h4 class="relations-title">{{ translations.relations_title }}</h4>
+                            <div class="relations-options">
+                                <label class="relation-checkbox">
+                                    <input type="checkbox" name="relation" value="series" checked>
+                                    <span class="checkbox-label">
+                                        <span class="checkbox-icon">📚</span>
+                                        {{ translations.relation_series }}
+                                    </span>
+                                </label>
+                                
+                                <label class="relation-checkbox">
+                                    <input type="checkbox" name="relation" value="author" checked>
+                                    <span class="checkbox-label">
+                                        <span class="checkbox-icon">✍️</span>
+                                        {{ translations.relation_author }}
+                                    </span>
+                                </label>
+                                
+                                <label class="relation-checkbox">
+                                    <input type="checkbox" name="relation" value="translator" checked>
+                                    <span class="checkbox-label">
+                                        <span class="checkbox-icon">🌐</span>
+                                        {{ translations.relation_translator }}
+                                    </span>
+                                </label>
+                                
+                                <label class="relation-checkbox">
+                                    <input type="checkbox" name="relation" value="publisher" checked>
+                                    <span class="checkbox-label">
+                                        <span class="checkbox-icon">🏢</span>
+                                        {{ translations.relation_publisher }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="recommendBtn" disabled>
+                            <span class="btn-icon">✨</span>
+                            {{ translations.btn_recommend }}
+                        </button>
+                        <button class="btn btn-secondary" id="clearBtn">
+                            <span class="btn-icon">🗑️</span>
+                            {{ translations.btn_clear }}
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 推荐结果区域 -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="section-header">
+                    <h2>{{ translations.results_title }}</h2>
+                    <p id="resultsSubtitle">{{ translations.results_subtitle }}</p>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>{{ translations.loading_text }}</p>
+                </div>
+                
+                <div class="recommendations" id="recommendations"></div>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>{{ translations.footer_text }}</p>
+            <p class="footer-note">{{ translations.footer_note }}</p>
+        </footer>
+    </div>
+
+    <script>
+        // 将翻译文本传递给JavaScript
+        window.translations = {{ translations | tojson }};
+        window.currentLang = "{{ lang }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
+

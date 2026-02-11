@@ -1,0 +1,28 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv
+.git
+.gitignore
+*.md
+.vscode
+.idea
+*.log
+.DS_Store
+Thumbs.db
+
+# 数据文件（太大，不打包进镜像）
+newBookInformation
+newCommentdata
+readBookUrlList
+userList
+userid.csv
+
+# 缓存文件（运行时生成）
+knowledge_graph/
+*.pkl
+
