@@ -122,7 +122,7 @@ def start_server():
         
         import app
         app.init_recommender()
-        app.app.run(host='0.0.0.0', port=5000, debug=True)
+        app.app.run(host='0.0.0.0', port=5000, debug=False)
     except KeyboardInterrupt:
         print("\n\n服务已停止")
     except Exception as e:
