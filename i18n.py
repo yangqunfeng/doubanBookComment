@@ -63,6 +63,7 @@ TRANSLATIONS = {
         # 页脚
         'footer_text': '基于知识图谱的可解释图书推荐系统',
         'footer_note': '数据来源：豆瓣读书 | 推荐算法：知识图谱 + 图嵌入',
+        'github_support': '喜欢这个项目？在 GitHub 上给我们一个 Star ⭐',
         
         # 消息提示
         'msg_book_added': '已添加',
@@ -137,6 +138,7 @@ TRANSLATIONS = {
         # Footer
         'footer_text': 'Explainable Book Recommendation System Based on Knowledge Graph',
         'footer_note': 'Data Source: Douban Books | Algorithm: Knowledge Graph + Graph Embedding',
+        'github_support': 'Like this project? Give us a Star on GitHub ⭐',
         
         # Messages
         'msg_book_added': 'Added',

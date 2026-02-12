@@ -1,248 +1,173 @@
-# 📚 Intelligent Book Recommendation System Based on Knowledge Graph
+# 📚 基于知识图谱的智能图书推荐系统
 
 <div align="center">
 
-[中文](README_CN.md) | **English**
+**[中文](README.md)** | **[English](README_EN.md)**
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Status](https://img.shields.io/badge/Status-Active-success.svg)
 
-An intelligent book recommendation system based on knowledge graphs and review keywords, providing explainable recommendations with multiple customizable strategies and bilingual (Chinese/English) interface support.
+一个基于知识图谱和评论关键词的智能图书推荐系统，提供可解释的推荐理由和多种自定义推荐策略，支持中英文双语界面。
 
-[Features](#-features) • [Demo](#-demo) • [Quick Start](#-quick-start) • [Usage Guide](#-usage-guide) • [Tech Stack](#-tech-stack)
+### 🌐 在线演示网站
+
+**👉 [http://47.110.250.188:5000/](http://47.110.250.188:5000/) 👈**
+
+立即体验智能图书推荐系统！
+
+### ⭐ 支持项目
+
+如果这个项目对你有帮助，请访问 [GitHub](https://github.com/yangqunfeng/book-rec-kg-comments) 给我们一个 Star ⭐️
 
 </div>
 
 ---
 
-## 📸 Screenshots
+## ✨ 功能特点
 
-> **Note**: Please replace with actual screenshots after deployment
-> 
-> Recommended screenshots:
-> 1. Main Interface - Search box and language switcher
-> 2. Strategy Selection - Three recommendation strategies
-> 3. Keyword Selection - Intelligently extracted keywords
-> 4. Results - Recommendation list with detailed reasons
->
-> Place screenshots in `screenshots/` folder and update links below
-
-### Main Interface
-![Main Interface](screenshots/main-interface.png)
-*Modern gradient design with bilingual support*
-
-### Strategy Selection
-![Strategy Selection](screenshots/strategies.png)
-*Knowledge graph, keyword-based, and hybrid recommendation strategies*
-
-### Keyword Selection
-![Keyword Selection](screenshots/keywords.png)
-*Intelligently extracted book review keywords with user customization*
-
-### Recommendation Results
-![Results](screenshots/results.png)
-*Detailed recommendation reasons and matching scores*
+- **🎯 三种推荐策略**: 知识图谱推荐、评论关键词匹配、混合推荐
+- **🔧 自定义推荐**: 可选择基于作者、系列、出版社、译者的推荐关系
+- **🧠 智能关键词**: 自动提取图书评论特征词，支持用户自定义选择
+- **💡 可解释性**: 每个推荐都提供清晰的理由和匹配度评分
+- **🌍 双语支持**: 完整的中英文界面切换
+- **🚀 性能优化**: 多进程加速 + 智能缓存，首次运行后启动仅需 5-10 秒
 
 ---
 
-## ✨ Features
+## 🚀 快速开始
 
-### 🎯 Intelligent Recommendation Algorithms
-- **Knowledge Graph Recommendations**: Based on relationships between books (authors, publishers, translators, series)
-- **Review Keyword Matching**: Dual algorithm (TF-IDF + TextRank) for extracting book features
-- **Hybrid Strategy**: Combines advantages of both approaches for more accurate recommendations
-
-### 🔧 Customizable Recommendation Strategies
-- **Pure Knowledge Graph**: Choose single or multiple relationships (author, series, publisher, translator)
-- **Pure Keyword-based**: Match based on user-selected book feature keywords
-- **Hybrid Mode**: Intelligently fuses both strategies
-
-### 🧠 Intelligent Keyword Recognition
-- **Semantic Classification**: Automatically identifies 5 categories (theme, plot, character, style, worldview)
-- **User Customization**: Users can select keywords they care about
-- **High Quality Extraction**: 77 stopwords filtering ensures keyword quality
-
-### 🚀 Performance Optimization
-- **Multiprocessing Acceleration**: 5-8x speedup using parallel keyword extraction
-- **Smart Caching**: First run caches results, subsequent startups take only 5-10 seconds
-- **Incremental Updates**: Supports cache incremental updates and management
-
-### 🌍 Internationalization Support
-- **Bilingual Interface**: Complete Chinese/English support
-- **Language Switching**: One-click language toggle with automatic preference saving
-- **SEO Friendly**: Proper HTML lang attributes
-
-### 💡 Explainability
-- **Recommendation Reasons**: Clear explanations for each recommendation
-- **Matching Scores**: Quantified recommendation confidence
-- **Relationship Paths**: Shows connections between books
-
----
-
-## 🎬 Demo
-
-> **Online Access**: [https://your-app-url.com](https://your-app-url.com) *(Update after deployment)*
-
-Local run:
-
-```bash
-python start.py
-# Visit http://localhost:5000
-```
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment guide
-
----
-
-## 🚀 Quick Start
-
-### Requirements
+### 环境要求
 
 - Python 3.8+
-- 4GB+ RAM (8GB recommended)
-- Multi-core CPU (for parallel processing)
+- 4GB+ RAM（推荐 8GB）
 
-### Installation
+### 安装步骤
 
-1. **Clone the repository**
+1. **克隆项目**
 
 ```bash
-git clone https://github.com/yourusername/doubanBookComment.git
-cd doubanBookComment
+git clone https://github.com/yangqunfeng/book-rec-kg-comments.git
+cd book-rec-kg-comments
 ```
 
-2. **Install dependencies**
+2. **安装依赖**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. **Prepare data**
-
-Ensure the following data files exist:
-- `newBookInformation`: Book information data
-- `newCommentdata`: Review data
-- `ChineseStopWords.txt`: Chinese stopwords list
-
-4. **Build knowledge graph**
+3. **构建知识图谱**
 
 ```bash
 python knowledge_graph_builder.py
 ```
 
-First run will:
-- Load 680,000+ books
-- Extract 3.67 million reviews
-- Build knowledge graph relationships
-- Extract review keywords (using multiprocessing)
-- Save cache files to `knowledge_graph/` directory
+首次运行会加载 68 万本图书数据和 367 万条评论，构建知识图谱并提取关键词（约 30-60 分钟）。
 
-⏱️ Estimated time: 30-60 minutes (depends on CPU cores)
-
-5. **Start service**
+4. **启动服务**
 
 ```bash
 python start.py
 ```
 
-Service will start at `http://localhost:5000`
+访问 `http://localhost:5000` 即可使用。
 
 ---
 
-## 📖 Usage Guide
+## 📖 使用指南
 
-### Web Interface
+### Web 界面使用
 
-#### 1. Add Favorite Books
+#### 1. 添加喜欢的图书
 
-- Enter book name in search box, system provides auto-complete suggestions
-- Click "Add" button to add book to list
-- Add multiple books for more accurate recommendations
+- 在搜索框输入书名，系统会提供自动补全建议
+- 点击"添加"按钮将图书加入列表
+- 可以添加多本图书以获得更精准的推荐
 
-#### 2. Choose Recommendation Strategy
+#### 2. 选择推荐策略
 
-**Knowledge Graph Recommendation**
-- Select relationship types: author, series, publisher, translator
-- Single or multiple selection
-- Based on structured relationships between books
+**知识图谱推荐**
+- 选择关系类型：作者、系列、出版社、译者
+- 可以单选或多选
+- 基于图书间的结构化关系进行推荐
 
-**Keyword-based Recommendation**
-- System automatically extracts feature words from reviews
-- Users can select keywords of interest
-- Based on semantic similarity
+**评论关键词推荐**
+- 系统自动提取图书评论中的特征词
+- 用户可以选择关注的关键词
+- 基于语义相似度进行推荐
 
-**Hybrid Recommendation** (Recommended)
-- Combines advantages of both approaches
-- Provides more comprehensive results
+**混合推荐**（推荐）
+- 结合知识图谱和关键词的优势
+- 提供更全面的推荐结果
 
-#### 3. Customize Keywords (Optional)
+#### 3. 自定义关键词（可选）
 
-- Click "Select Keywords" button
-- System displays high-quality keywords extracted from reviews
-- Select feature words you care about
-- System will match based on these keywords
+- 点击"选择关键词"按钮
+- 系统展示从图书评论中提取的高质量关键词
+- 选择你关注的特征词
+- 系统将基于这些关键词进行匹配推荐
 
-#### 4. View Results
+#### 4. 查看推荐结果
 
-Each recommendation includes:
-- 📖 Book name and Douban link
-- ⭐ Douban rating
-- 📊 Matching score
-- 💡 Detailed recommendation reasons
+每个推荐包含：
+- 📖 图书名称和豆瓣链接
+- ⭐ 豆瓣评分
+- 📊 匹配度得分
+- 💡 详细的推荐理由
 
-#### 5. Switch Language
+#### 5. 切换语言
 
-- Click language switcher button in top-right corner
-- Supports Chinese/English toggle
-- Language preference automatically saved
+- 点击右上角的语言切换按钮
+- 支持中文/English 切换
+- 语言偏好自动保存
 
-### API Usage
+### API 使用
 
-#### Get Recommendations
+#### 获取推荐
 
 ```bash
 POST /api/recommend
 Content-Type: application/json
 
 {
-    "favorite_books": ["The Three-Body Problem", "To Live", "One Hundred Years of Solitude"],
+    "favorite_books": ["三体", "活着", "百年孤独"],
     "strategy": "mixed",
     "relation_types": ["author", "series"],
-    "selected_keywords": ["sci-fi", "humanity", "philosophy"],
+    "selected_keywords": ["科幻", "人性", "哲学"],
     "top_k": 20,
-    "lang": "en"
+    "lang": "zh"
 }
 ```
 
-**Parameters**:
-- `favorite_books`: List of user's favorite books (required)
-- `strategy`: Recommendation strategy - `kg_only`, `keyword_only`, `mixed` (default: `mixed`)
-- `relation_types`: Knowledge graph relationship types - `author`, `series`, `publisher`, `translator`
-- `selected_keywords`: User-selected keyword list
-- `top_k`: Number of recommendations to return (default: 20)
-- `lang`: Language - `zh`, `en` (default: `zh`)
+**参数说明**：
+- `favorite_books`: 用户喜欢的图书列表（必填）
+- `strategy`: 推荐策略，可选 `kg_only`、`keyword_only`、`mixed`（默认 `mixed`）
+- `relation_types`: 知识图谱关系类型，可选 `author`、`series`、`publisher`、`translator`
+- `selected_keywords`: 用户选择的关键词列表
+- `top_k`: 返回推荐数量（默认 20）
+- `lang`: 语言，可选 `zh`、`en`（默认 `zh`）
 
-**Response Example**:
+**响应示例**：
 
 ```json
 {
     "success": true,
     "data": {
-        "favorite_books": ["The Three-Body Problem"],
+        "favorite_books": ["三体"],
         "recommendations": [
             {
                 "book_id": 12345,
-                "book_name": "Ball Lightning",
+                "book_name": "球状闪电",
                 "book_url": "https://book.douban.com/subject/12345/",
                 "rating": 8.5,
                 "score": 0.92,
                 "reasons": [
-                    "Same author as 'The Three-Body Problem': Liu Cixin",
-                    "Keyword match: sci-fi(0.85), physics(0.78)"
+                    "与《三体》作者相同: 刘慈欣",
+                    "评论关键词匹配: 科幻(0.85), 物理(0.78)"
                 ],
-                "explanation": "This book has high similarity with your favorite 'The Three-Body Problem'..."
+                "explanation": "这本书与您喜欢的《三体》有很高的相似度..."
             }
         ],
         "total": 20,
@@ -251,353 +176,108 @@ Content-Type: application/json
 }
 ```
 
-#### Search Books
+#### 搜索图书
 
 ```bash
-GET /api/search?q=three+body&limit=10
+GET /api/search?q=三体&limit=10
 ```
 
-#### Get Book Keywords
+#### 获取图书关键词
 
 ```bash
-GET /api/book_keywords/12345?lang=en
+GET /api/book_keywords/12345?lang=zh
 ```
 
-#### Get System Stats
+#### 获取系统统计
 
 ```bash
-GET /api/stats?lang=en
+GET /api/stats?lang=zh
 ```
 
 ---
 
-## 🏗️ Tech Stack
+## 🏗️ 技术架构
 
-### Backend
+### 核心技术
 
-| Technology | Purpose |
-|------------|---------|
-| **Flask** | Web framework |
-| **NetworkX** | Knowledge graph construction and querying |
-| **Pandas** | Data processing |
-| **NumPy** | Numerical computation |
-| **Jieba** | Chinese word segmentation |
-| **scikit-learn** | TF-IDF feature extraction |
-| **Gensim** | TextRank keyword extraction |
+- **后端**: Flask + NetworkX + Pandas + Jieba + scikit-learn
+- **前端**: 原生 JavaScript + CSS3
+- **算法**: 知识图谱 + TF-IDF + TextRank
 
-### Frontend
-
-| Technology | Purpose |
-|------------|---------|
-| **Vanilla JavaScript** | Frontend logic |
-| **CSS3** | Modern styling |
-| **LocalStorage** | User preference storage |
-
-### Core Algorithms
-
-#### 1. Knowledge Graph Construction
+### 推荐算法
 
 ```
-Book Entity ──written_by──> Author Entity
-            ├─published_by──> Publisher Entity
-            ├─translated_by──> Translator Entity
-            └─belongs_to──> Series Entity
+混合推荐得分 = 0.5 × 知识图谱得分 + 0.5 × 关键词相似度得分
 ```
 
-**Relationship Weights**:
-- Same author: 0.30
-- Same series: 0.40
-- Same publisher: 0.15
-- Same translator: 0.20
+**知识图谱关系权重**:
+- 相同作者: 0.30
+- 相同系列: 0.40
+- 相同出版社: 0.15
+- 相同译者: 0.20
 
-#### 2. Review Keyword Extraction
+---
 
-**Dual Algorithm Fusion**:
-- **TF-IDF**: Statistical term frequency and inverse document frequency
-- **TextRank**: Graph-based keyword extraction
+## 📊 数据说明
 
-**Semantic Classification**:
-- Theme: sci-fi, history, romance, mystery...
-- Plot: twist, pacing, foreshadowing, climax...
-- Character: character, role, personality, growth...
-- Style: humorous, profound, delicate, shocking...
-- Worldview: worldview, setting, fictional, future...
+| 数据类型 | 数量 | 说明 |
+|---------|------|------|
+| 图书信息 | 68万+ | 书名、作者、出版社、评分等 |
+| 用户评论 | 367万+ | 评论内容、评分、时间等 |
+| 知识图谱实体 | 70万+ | 图书、作者、出版社、译者、系列 |
+| 知识图谱关系 | 100万+ | 写作、出版、翻译、系列关系 |
 
-**Quality Assurance**:
-- 77 stopwords filtering
-- Minimum word length limit
-- Word frequency threshold filtering
+数据来源：豆瓣读书（2022年采集）
 
-#### 3. Recommendation Algorithm
+---
 
-**Hybrid Strategy**:
+## 📁 项目结构
 
-```python
-score = α × kg_score + β × keyword_score
-
-Where:
-- kg_score: Knowledge graph relationship score
-- keyword_score: Keyword similarity score
-- α, β: Adjustable weights (default 0.5, 0.5)
+```
+book-rec-kg-comments/
+├── app.py                      # Flask 主应用
+├── start.py                    # 启动脚本
+├── knowledge_graph_builder.py  # 知识图谱构建
+├── keyword_recommender.py      # 推荐算法核心
+├── requirements.txt            # Python 依赖
+├── templates/index.html        # 前端页面
+├── static/                     # 静态资源
+├── knowledge_graph/            # 知识图谱数据（自动生成）
+├── newBookInformation          # 图书信息数据
+└── newCommentdata             # 评论数据
 ```
 
 ---
 
-## 📁 Project Structure
+## 🤝 贡献
 
-```
-doubanBookComment/
-├── app.py                      # Flask main application
-├── start.py                    # Startup script
-├── config.py                   # Configuration file
-├── i18n.py                     # Internationalization config
-├── knowledge_graph_builder.py  # Knowledge graph construction
-├── keyword_recommender.py      # Recommendation algorithm core
-├── cache_manager.py            # Cache management tool
-├── test_keyword_quality.py     # Keyword quality testing
-├── test_strategies.py          # Strategy testing
-├── requirements.txt            # Python dependencies
-├── ChineseStopWords.txt        # Chinese stopwords
-│
-├── templates/
-│   └── index.html             # Frontend template
-│
-├── static/
-│   ├── css/
-│   │   └── style.css          # Styles
-│   └── js/
-│       └── app.js             # Frontend logic
-│
-├── knowledge_graph/           # Knowledge graph data (auto-generated)
-│   ├── entities.pkl           # Entity data
-│   ├── relations.pkl          # Relationship data
-│   ├── embeddings.pkl         # Entity embeddings
-│   └── comment_keywords.pkl   # Review keyword cache
-│
-├── newBookInformation         # Book information data
-├── newCommentdata            # Review data
-│
-└── docs/                      # Documentation
-    ├── CACHE_OPTIMIZATION.md  # Cache optimization guide
-    ├── STRATEGY_GUIDE.md      # Strategy guide
-    ├── WEB_FEATURES.md        # Web features guide
-    └── I18N_GUIDE.md          # Internationalization guide
-```
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
 
 ---
 
-## ⚙️ Configuration
+## 📄 引用
 
-Customize settings in `config.py`:
-
-```python
-# Recommendation settings
-TOP_K = 20                    # Default number of recommendations
-MIN_SCORE_THRESHOLD = 0.1     # Minimum recommendation score threshold
-
-# Keyword extraction settings
-KEYWORD_TOP_N = 20            # Number of keywords per book
-MIN_KEYWORD_FREQ = 3          # Minimum keyword frequency
-
-# Performance settings
-USE_MULTIPROCESSING = True    # Use multiprocessing
-MAX_WORKERS = None            # Max workers (None = CPU cores - 1)
-
-# Web service settings
-HOST = '0.0.0.0'
-PORT = 5000
-DEBUG = False
-```
-
----
-
-## 🔧 Cache Management
-
-Cache management tool `cache_manager.py`:
-
-```bash
-# View cache info
-python cache_manager.py info
-
-# Clear all cache
-python cache_manager.py clear
-
-# Clear specific cache
-python cache_manager.py clear --type keywords
-
-# Rebuild cache
-python cache_manager.py rebuild
-```
-
----
-
-## 📊 Data Description
-
-### Data Source
-
-Douban Reading dataset (collected in 2022):
-
-| Data Type | Quantity | Description |
-|-----------|----------|-------------|
-| Book Information | 680,000+ | Book names, authors, publishers, ratings, etc. |
-| User Reviews | 3.67M+ | Review content, ratings, timestamps, etc. |
-| KG Entities | 700,000+ | Books, authors, publishers, translators, series |
-| KG Relations | 1M+ | Writing, publishing, translating, series relationships |
-
-### Data Format
-
-**Book Information** (`newBookInformation`):
-```python
-{
-    'bookId': '1234567',
-    'bookName': 'The Three-Body Problem',
-    'author': 'Liu Cixin',
-    'publisher': 'Chongqing Publishing House',
-    'rating': '9.3',
-    'series': 'Remembrance of Earth\'s Past',
-    'translator': None
-}
-```
-
-**Review Data** (`newCommentdata`):
-```python
-{
-    'bookId': '1234567',
-    'userId': 'user123',
-    'comment': 'Excellent sci-fi novel...',
-    'rating': 'rating50-5',
-    'time': '2022-01-01'
-}
-```
-
----
-
-## 🧪 Testing
-
-### Keyword Quality Test
-
-```bash
-python test_keyword_quality.py
-```
-
-Tests:
-- Keyword extraction quality
-- Semantic classification accuracy
-- Stopword filtering effectiveness
-
-### Strategy Test
-
-```bash
-python test_strategies.py
-```
-
-Test scenarios:
-- Pure knowledge graph recommendation
-- Pure keyword recommendation
-- Hybrid recommendation
-- Custom relationship recommendation
-- Custom keyword recommendation
-
----
-
-## 🚀 Performance Optimization
-
-### Implemented Optimizations
-
-1. **Multiprocessing Parallelization**
-   - Keyword extraction uses multiprocessing
-   - 5-8x speedup
-
-2. **Smart Caching**
-   - Cache results after first run
-   - Subsequent startups take only 5-10 seconds
-
-3. **Incremental Updates**
-   - Process only new books
-   - Avoid redundant computation
-
-### Further Optimization Suggestions
-
-- [ ] Use Redis for caching popular recommendations
-- [ ] Use Neo4j graph database for knowledge graph storage
-- [ ] Use Elasticsearch for accelerated book search
-- [ ] Use Celery for asynchronous recommendation tasks
-- [ ] Add CDN for static resource acceleration
-
----
-
-## 📈 Future Plans
-
-### Feature Extensions
-
-- [ ] User system and personalized recommendations
-- [ ] Recommendation feedback mechanism
-- [ ] Knowledge graph visualization
-- [ ] Graphical recommendation reason display
-- [ ] Mobile adaptation
-- [ ] Social sharing features
-
-### Algorithm Optimization
-
-- [ ] Deep learning recommendation models
-- [ ] Collaborative filtering algorithms
-- [ ] Graph Neural Networks (GNN)
-- [ ] Reinforcement learning for strategy optimization
-- [ ] Multimodal recommendations (cover images, descriptions)
-
-### Data Expansion
-
-- [ ] Real-time Douban data integration
-- [ ] Support for more book platforms
-- [ ] User behavior data collection
-- [ ] Book tagging and classification system
-
----
-
-## 📚 Documentation
-
-Detailed documentation in `docs/` directory:
-
-- [Cache Optimization Guide](CACHE_OPTIMIZATION.md)
-- [Strategy Guide](STRATEGY_GUIDE.md)
-- [Web Features Guide](WEB_FEATURES.md)
-- [Internationalization Guide](I18N_GUIDE.md)
-
----
-
-## 🤝 Contributing
-
-Issues and Pull Requests are welcome!
-
-### Contribution Guidelines
-
-1. Fork this project
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details
-
----
-
-## 📄 Citation
-
-If this project helps your research, please cite:
+如果这个项目对您的研究有帮助，欢迎引用：
 
 ```bibtex
-@mastersthesis{yang2024kg,
-  title={Research on Explainable Book Recommendation Based on Knowledge Graph},
-  author={Yang, Qunfeng},
-  school={Anhui Polytechnic University},
+@mastersthesis{
+  title={基于知识图谱的可解释图书推荐研究},
+  author={杨群峰},
+  school={安徽工程大学},
   year={2024},
   doi={10.27763/d.cnki.gahgc.2023.000087}
 }
 
-@article{yang2022book,
-  title={Book Recommendation Method Based on Sentiment Analysis and Concept Dictionary},
-  author={Yang, Qunfeng and Wang, Zhongqun and Huang, Subin},
-  journal={Journal of Anhui Polytechnic University},
+@article{
+  title={基于情感分析和概念词典的图书推荐方法},
+  author={杨群峰 and 王忠群 and 皇苏斌},
+  journal={安徽工程大学学报},
   volume={37},
   number={5},
   pages={59--65},
@@ -607,31 +287,22 @@ If this project helps your research, please cite:
 
 ---
 
-## 📧 Contact
+## 📧 联系方式
 
-- Project Homepage: [GitHub](https://github.com/yourusername/doubanBookComment) *(Replace with your repo)*
-- Issue Tracker: [Issues](https://github.com/yourusername/doubanBookComment/issues)
-- Email: your.email@example.com *(Replace with your email)*
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details
+- 项目主页: [GitHub](https://github.com/yangqunfeng/book-rec-kg-comments)
+- 问题反馈: [Issues](https://github.com/yangqunfeng/book-rec-kg-comments/issues)
 
 ---
 
-## 🙏 Acknowledgments
+## 📜 许可证
 
-- Thanks to Douban for providing book data
-- Thanks to all open source project contributors
-- Thanks to all users for their feedback
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
 
 ---
 
 <div align="center">
 
-**If this project helps you, please give it a ⭐️ Star!**
+**如果这个项目对你有帮助，请给一个 ⭐️ Star！**
 
 Made with ❤️ by Yang Qunfeng
 
