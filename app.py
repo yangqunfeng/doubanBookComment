@@ -10,6 +10,10 @@ import config
 from keyword_recommender import KeywordBasedRecommender
 import traceback
 from i18n import get_text, TRANSLATIONS
+from logger_config import get_logger
+
+# 初始化日志器
+logger = get_logger('book_recommender_api')
 
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
@@ -22,11 +26,11 @@ def init_recommender():
     """初始化推荐器"""
     global recommender
     if recommender is None:
-        print("正在初始化基于关键词的推荐系统...")
+        logger.info("正在初始化基于关键词的推荐系统...")
         recommender = KeywordBasedRecommender()
         recommender.load_kg()
         recommender.load_and_analyze_comments()
-        print("推荐系统初始化完成！")
+        logger.info("推荐系统初始化完成！")
 
 
 @app.route('/')
@@ -58,7 +62,10 @@ def get_translations(lang):
 def get_book_keywords(book_id):
     """获取书籍的评论关键词"""
     try:
+        logger.info(f"获取书籍关键词请求: book_id={book_id}, IP={request.remote_addr}")
+        
         if book_id not in recommender.entities:
+            logger.warning(f"书籍不存在: book_id={book_id}")
             return jsonify({
                 'success': False,
                 'message': '书籍不存在'
@@ -82,6 +89,8 @@ def get_book_keywords(book_id):
         # 获取评论统计
         comment_stats = recommender.comment_stats.get(book_id, {})
         
+        logger.info(f"成功获取书籍关键词: book_id={book_id}, keywords_count={len(keywords)}")
+        
         return jsonify({
             'success': True,
             'data': {
@@ -97,7 +106,7 @@ def get_book_keywords(book_id):
         })
     
     except Exception as e:
-        print(f"获取书籍关键词出错: {str(e)}")
+        logger.exception(f"获取书籍关键词出错: book_id={book_id}")
         return jsonify({
             'success': False,
             'message': f'获取失败: {str(e)}'
@@ -116,7 +125,10 @@ def recommend():
         relations = data.get('relations', None)  # 指定使用的关系
         selected_keywords = data.get('selected_keywords', None)  # 用户选择的关键词
         
+        logger.info(f"推荐请求: books={favorite_books}, strategy={strategy}, top_k={top_k}, IP={request.remote_addr}")
+        
         if not favorite_books:
+            logger.warning("推荐请求失败: 未提供喜欢的书籍")
             return jsonify({
                 'success': False,
                 'message': '请至少输入一本喜欢的书籍'
@@ -125,6 +137,7 @@ def recommend():
         # 验证策略
         valid_strategies = ['mixed', 'kg_only', 'keyword_only']
         if strategy not in valid_strategies:
+            logger.warning(f"推荐请求失败: 无效的策略 {strategy}")
             return jsonify({
                 'success': False,
                 'message': f'无效的推荐策略，可选值: {", ".join(valid_strategies)}'
@@ -135,6 +148,7 @@ def recommend():
             valid_relations = ['series', 'author', 'translator', 'publisher']
             for rel in relations:
                 if rel not in valid_relations:
+                    logger.warning(f"推荐请求失败: 无效的关系类型 {rel}")
                     return jsonify({
                         'success': False,
                         'message': f'无效的关系类型: {rel}，可选值: {", ".join(valid_relations)}'
@@ -149,6 +163,8 @@ def recommend():
             selected_keywords=selected_keywords
         )
         
+        logger.info(f"推荐成功: 返回 {len(recommendations)} 个结果")
+        
         return jsonify({
             'success': True,
             'data': {
@@ -162,8 +178,7 @@ def recommend():
         })
     
     except Exception as e:
-        print(f"推荐出错: {str(e)}")
-        traceback.print_exc()
+        logger.exception(f"推荐失败: {str(e)}")
         return jsonify({
             'success': False,
             'message': f'推荐失败: {str(e)}'
@@ -177,7 +192,10 @@ def search_books():
         query = request.args.get('q', '')
         limit = int(request.args.get('limit', 10))
         
+        logger.info(f"搜索请求: query={query}, limit={limit}, IP={request.remote_addr}")
+        
         if not query:
+            logger.warning("搜索请求失败: 未提供搜索关键词")
             return jsonify({
                 'success': False,
                 'message': '请输入搜索关键词'
@@ -197,6 +215,8 @@ def search_books():
                 if len(results) >= limit:
                     break
         
+        logger.info(f"搜索成功: query={query}, results_count={len(results)}")
+        
         return jsonify({
             'success': True,
             'data': {
@@ -207,7 +227,7 @@ def search_books():
         })
     
     except Exception as e:
-        print(f"搜索出错: {str(e)}")
+        logger.exception(f"搜索失败: query={query}")
         return jsonify({
             'success': False,
             'message': f'搜索失败: {str(e)}'
@@ -218,7 +238,10 @@ def search_books():
 def get_book_detail(book_id):
     """获取书籍详情API"""
     try:
+        logger.info(f"获取书籍详情请求: book_id={book_id}, IP={request.remote_addr}")
+        
         if book_id not in recommender.entities:
+            logger.warning(f"书籍不存在: book_id={book_id}")
             return jsonify({
                 'success': False,
                 'message': '书籍不存在'
@@ -247,6 +270,8 @@ def get_book_detail(book_id):
             elif entity_type == 'series':
                 related['series'].append(neighbor_entity['name'])
         
+        logger.info(f"成功获取书籍详情: book_id={book_id}, book_name={entity['name']}")
+        
         return jsonify({
             'success': True,
             'data': {
@@ -259,7 +284,7 @@ def get_book_detail(book_id):
         })
     
     except Exception as e:
-        print(f"获取书籍详情出错: {str(e)}")
+        logger.exception(f"获取书籍详情出错: book_id={book_id}")
         return jsonify({
             'success': False,
             'message': f'获取失败: {str(e)}'
@@ -270,6 +295,8 @@ def get_book_detail(book_id):
 def get_stats():
     """获取系统统计信息"""
     try:
+        logger.info(f"获取统计信息请求: IP={request.remote_addr}")
+        
         stats = {
             'total_entities': len(recommender.entities),
             'total_relations': len(recommender.relations),
@@ -280,13 +307,15 @@ def get_stats():
             'series': len(recommender.entity_types.get('series', []))
         }
         
+        logger.info(f"成功获取统计信息: books={stats['books']}, authors={stats['authors']}")
+        
         return jsonify({
             'success': True,
             'data': stats
         })
     
     except Exception as e:
-        print(f"获取统计信息出错: {str(e)}")
+        logger.exception("获取统计信息出错")
         return jsonify({
             'success': False,
             'message': f'获取失败: {str(e)}'
@@ -294,6 +323,12 @@ def get_stats():
 
 
 if __name__ == '__main__':
+    logger.info("=" * 60)
+    logger.info("启动图书推荐系统 API 服务")
+    logger.info("=" * 60)
+    
     init_recommender()
+    
+    logger.info(f"服务启动: host={config.HOST}, port={config.PORT}, debug={config.DEBUG}")
     app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, use_reloader=False)
 
