@@ -32,25 +32,17 @@ env/
 *.swp
 *.swo
 *~
-.DS_Store
+.cursor/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
 
 # Data files (large files, should be downloaded separately)
-newBookInformation
-newCommentdata
-readBookUrlList
-userList
-userid.csv
-
-# Knowledge graph cache (will be generated)
-knowledge_graph/
-*.pkl
+data/raw/
+data/processed/
 
 # Logs
-*.log
+logs/
 
 # OS
 Thumbs.db
@@ -61,3 +53,22 @@ Thumbs.db
 *.bak
 *.swp
 
+# Large binary files
+*.pkl
+*.h5
+*.model
+*.bin
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+
+# Cache
+.cache/
+*.cache

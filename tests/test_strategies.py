@@ -2,7 +2,14 @@
 """
 测试不同的推荐策略
 """
-from keyword_recommender import KeywordBasedRecommender
+import sys
+from pathlib import Path
+
+# 添加项目根目录到路径
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from src.core.keyword_recommender import KeywordBasedRecommender
 
 def test_strategies():
     """测试不同推荐策略"""

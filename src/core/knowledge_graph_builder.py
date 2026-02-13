@@ -7,10 +7,17 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+import sys
+from pathlib import Path
 from collections import defaultdict
 import networkx as nx
 from tqdm import tqdm
-import config
+
+# 添加项目根目录到路径
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+from config import config
 
 
 class KnowledgeGraphBuilder:

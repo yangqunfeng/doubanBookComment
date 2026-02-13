@@ -4,22 +4,55 @@ Flask Web API服务
 提供图书推荐的RESTful API
 支持中英文双语
 """
+import sys
+from pathlib import Path
+
+# 添加项目根目录到路径
+project_root = Path(__file__).parent
+sys.path.insert(0, str(project_root))
+
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-import config
-from keyword_recommender import KeywordBasedRecommender
-import traceback
-from i18n import get_text, TRANSLATIONS
-from logger_config import get_logger
+from config import config
+from src.core.keyword_recommender import KeywordBasedRecommender
+from src.utils.i18n import get_text, TRANSLATIONS
+from src.utils.logger_config import get_logger
+from functools import wraps
+from datetime import datetime
 
-# 初始化日志器
-logger = get_logger('book_recommender_api')
+# 初始化日志
+logger = get_logger('app')
+access_logger = get_logger('access')  # 专门的访问日志
 
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
 
 # 初始化推荐器
 recommender = None
+
+
+def log_access(f):
+    """访问日志装饰器"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # 获取客户端信息
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if ip and ',' in ip:
+            ip = ip.split(',')[0].strip()
+        
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        method = request.method
+        path = request.path
+        query_string = request.query_string.decode('utf-8')
+        
+        # 记录访问
+        access_logger.info(
+            f"IP={ip} | Method={method} | Path={path} | "
+            f"Query={query_string} | UserAgent={user_agent}"
+        )
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def init_recommender():
@@ -34,6 +67,7 @@ def init_recommender():
 
 
 @app.route('/')
+@log_access
 def index():
     """首页"""
     # 获取语言参数，默认中文
@@ -62,8 +96,7 @@ def get_translations(lang):
 def get_book_keywords(book_id):
     """获取书籍的评论关键词"""
     try:
-        logger.info(f"获取书籍关键词请求: book_id={book_id}, IP={request.remote_addr}")
-        
+        logger.info(f"获取书籍关键词请求: book_id={book_id}")
         if book_id not in recommender.entities:
             logger.warning(f"书籍不存在: book_id={book_id}")
             return jsonify({
@@ -89,8 +122,6 @@ def get_book_keywords(book_id):
         # 获取评论统计
         comment_stats = recommender.comment_stats.get(book_id, {})
         
-        logger.info(f"成功获取书籍关键词: book_id={book_id}, keywords_count={len(keywords)}")
-        
         return jsonify({
             'success': True,
             'data': {
@@ -106,7 +137,7 @@ def get_book_keywords(book_id):
         })
     
     except Exception as e:
-        logger.exception(f"获取书籍关键词出错: book_id={book_id}")
+        logger.error(f"获取书籍关键词出错: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
             'message': f'获取失败: {str(e)}'
@@ -114,6 +145,7 @@ def get_book_keywords(book_id):
 
 
 @app.route('/api/recommend', methods=['POST'])
+@log_access
 def recommend():
     """推荐API"""
     try:
@@ -125,10 +157,9 @@ def recommend():
         relations = data.get('relations', None)  # 指定使用的关系
         selected_keywords = data.get('selected_keywords', None)  # 用户选择的关键词
         
-        logger.info(f"推荐请求: books={favorite_books}, strategy={strategy}, top_k={top_k}, IP={request.remote_addr}")
+        logger.info(f"推荐请求: books={favorite_books}, strategy={strategy}, top_k={top_k}")
         
         if not favorite_books:
-            logger.warning("推荐请求失败: 未提供喜欢的书籍")
             return jsonify({
                 'success': False,
                 'message': '请至少输入一本喜欢的书籍'
@@ -137,7 +168,6 @@ def recommend():
         # 验证策略
         valid_strategies = ['mixed', 'kg_only', 'keyword_only']
         if strategy not in valid_strategies:
-            logger.warning(f"推荐请求失败: 无效的策略 {strategy}")
             return jsonify({
                 'success': False,
                 'message': f'无效的推荐策略，可选值: {", ".join(valid_strategies)}'
@@ -148,7 +178,6 @@ def recommend():
             valid_relations = ['series', 'author', 'translator', 'publisher']
             for rel in relations:
                 if rel not in valid_relations:
-                    logger.warning(f"推荐请求失败: 无效的关系类型 {rel}")
                     return jsonify({
                         'success': False,
                         'message': f'无效的关系类型: {rel}，可选值: {", ".join(valid_relations)}'
@@ -163,8 +192,6 @@ def recommend():
             selected_keywords=selected_keywords
         )
         
-        logger.info(f"推荐成功: 返回 {len(recommendations)} 个结果")
-        
         return jsonify({
             'success': True,
             'data': {
@@ -178,7 +205,7 @@ def recommend():
         })
     
     except Exception as e:
-        logger.exception(f"推荐失败: {str(e)}")
+        logger.error(f"推荐出错: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
             'message': f'推荐失败: {str(e)}'
@@ -186,16 +213,16 @@ def recommend():
 
 
 @app.route('/api/search', methods=['GET'])
+@log_access
 def search_books():
     """搜索书籍API"""
     try:
         query = request.args.get('q', '')
         limit = int(request.args.get('limit', 10))
         
-        logger.info(f"搜索请求: query={query}, limit={limit}, IP={request.remote_addr}")
+        logger.info(f"搜索请求: query={query}, limit={limit}")
         
         if not query:
-            logger.warning("搜索请求失败: 未提供搜索关键词")
             return jsonify({
                 'success': False,
                 'message': '请输入搜索关键词'
@@ -215,8 +242,6 @@ def search_books():
                 if len(results) >= limit:
                     break
         
-        logger.info(f"搜索成功: query={query}, results_count={len(results)}")
-        
         return jsonify({
             'success': True,
             'data': {
@@ -227,7 +252,7 @@ def search_books():
         })
     
     except Exception as e:
-        logger.exception(f"搜索失败: query={query}")
+        logger.error(f"搜索出错: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
             'message': f'搜索失败: {str(e)}'
@@ -235,13 +260,11 @@ def search_books():
 
 
 @app.route('/api/book/<int:book_id>', methods=['GET'])
+@log_access
 def get_book_detail(book_id):
     """获取书籍详情API"""
     try:
-        logger.info(f"获取书籍详情请求: book_id={book_id}, IP={request.remote_addr}")
-        
         if book_id not in recommender.entities:
-            logger.warning(f"书籍不存在: book_id={book_id}")
             return jsonify({
                 'success': False,
                 'message': '书籍不存在'
@@ -270,8 +293,6 @@ def get_book_detail(book_id):
             elif entity_type == 'series':
                 related['series'].append(neighbor_entity['name'])
         
-        logger.info(f"成功获取书籍详情: book_id={book_id}, book_name={entity['name']}")
-        
         return jsonify({
             'success': True,
             'data': {
@@ -284,7 +305,7 @@ def get_book_detail(book_id):
         })
     
     except Exception as e:
-        logger.exception(f"获取书籍详情出错: book_id={book_id}")
+        logger.error(f"获取书籍详情出错: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
             'message': f'获取失败: {str(e)}'
@@ -292,11 +313,10 @@ def get_book_detail(book_id):
 
 
 @app.route('/api/stats', methods=['GET'])
+@log_access
 def get_stats():
     """获取系统统计信息"""
     try:
-        logger.info(f"获取统计信息请求: IP={request.remote_addr}")
-        
         stats = {
             'total_entities': len(recommender.entities),
             'total_relations': len(recommender.relations),
@@ -307,15 +327,13 @@ def get_stats():
             'series': len(recommender.entity_types.get('series', []))
         }
         
-        logger.info(f"成功获取统计信息: books={stats['books']}, authors={stats['authors']}")
-        
         return jsonify({
             'success': True,
             'data': stats
         })
     
     except Exception as e:
-        logger.exception("获取统计信息出错")
+        logger.error(f"获取统计信息出错: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
             'message': f'获取失败: {str(e)}'
@@ -323,12 +341,6 @@ def get_stats():
 
 
 if __name__ == '__main__':
-    logger.info("=" * 60)
-    logger.info("启动图书推荐系统 API 服务")
-    logger.info("=" * 60)
-    
     init_recommender()
-    
-    logger.info(f"服务启动: host={config.HOST}, port={config.PORT}, debug={config.DEBUG}")
     app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG, use_reloader=False)
 

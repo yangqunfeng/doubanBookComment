@@ -3,7 +3,14 @@
 缓存管理工具
 """
 import os
-import config
+import sys
+from pathlib import Path
+
+# 添加项目根目录到路径
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+from config import config
 
 def clear_keyword_cache():
     """清除关键词缓存"""

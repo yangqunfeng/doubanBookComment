@@ -8,7 +8,14 @@ import numpy as np
 import networkx as nx
 from collections import defaultdict, Counter
 import pandas as pd
-import config
+import sys
+from pathlib import Path
+
+# 添加项目根目录到路径
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+from config import config
 import jieba
 import jieba.analyse
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -87,15 +94,31 @@ class KeywordBasedRecommender:
         """加载知识图谱"""
         print("正在加载知识图谱...")
         
-        with open(config.KG_ENTITIES_FILE, 'rb') as f:
-            data = pickle.load(f)
-            self.entities = data['entities']
-            self.entity_types = data['entity_types']
+        try:
+            print(f"加载实体文件: {config.KG_ENTITIES_FILE}")
+            with open(config.KG_ENTITIES_FILE, 'rb') as f:
+                data = pickle.load(f)
+                self.entities = data['entities']
+                self.entity_types = data['entity_types']
+            print(f"✓ 实体加载成功: {len(self.entities)} 个实体")
+        except Exception as e:
+            print(f"❌ 加载实体文件失败: {str(e)}")
+            print(f"文件路径: {config.KG_ENTITIES_FILE}")
+            print(f"请检查文件是否完整，或运行 python knowledge_graph_builder.py 重新生成")
+            raise
         
-        with open(config.KG_RELATIONS_FILE, 'rb') as f:
-            data = pickle.load(f)
-            self.relations = data['relations']
-            self.graph = data['graph']
+        try:
+            print(f"加载关系文件: {config.KG_RELATIONS_FILE}")
+            with open(config.KG_RELATIONS_FILE, 'rb') as f:
+                data = pickle.load(f)
+                self.relations = data['relations']
+                self.graph = data['graph']
+            print(f"✓ 关系加载成功: {len(self.relations)} 条关系")
+        except Exception as e:
+            print(f"❌ 加载关系文件失败: {str(e)}")
+            print(f"文件路径: {config.KG_RELATIONS_FILE}")
+            print(f"请检查文件是否完整，或运行 python knowledge_graph_builder.py 重新生成")
+            raise
         
         self.book_entities = self.entity_types.get('book', [])
         
